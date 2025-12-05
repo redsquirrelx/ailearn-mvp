@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Learn - Educación Personalizada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #ec4899;
+            --accent-light: #f472b6;
+            --success: #10b981;
+            --bg-dark: #0f172a;
+            --bg-darker: #020617;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            color: #e2e8f0;
+            font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.6); }
+        }
+
+        @keyframes pulse-soft {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .section-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .section-hidden {
+            display: none;
+        }
+
+        /* Header */
+        header {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Botones de navegación */
+        .nav-btn {
+            background: transparent;
+            border: 2px solid transparent;
+            color: #94a3b8;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .nav-btn:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .nav-btn.active {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Tarjetas */
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+        }
+
+        .card-accent {
+            border-left: 4px solid var(--accent);
+        }
+
+        /* Gradiente de acento */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Botones principales */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(99, 102, 241, 0.2);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Inputs */
+        input, textarea {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border-color);
+            color: #e2e8f0;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(30, 41, 59, 0.8);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 8px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Contenedor principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Grid responsivo */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;">
+            <div class="logo">🎓 AI Learn</div>
+            <nav style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="nav-btn active" onclick="mostrarSeccion('inicio', this)">Inicio</button>
+                <button class="nav-btn" onclick="mostrarSeccion('cursos', this)">Cursos</button>
+                <button class="nav-btn" onclick="mostrarSeccion('progreso', this)">Mi Progreso</button>
+                <button class="nav-btn" onclick="mostrarSeccion('tutor', this)">Tutor IA</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contenedor principal -->
+    <main class="container" style="padding: 40px 20px;">
+
+        <!-- SECCIÓN INICIO -->
+        <section id="inicio" class="section-fade-in">
+            <div style="margin-bottom: 40px;">
+                <h1 style="font-size: 48px; font-weight: 800; margin-bottom: 16px;">
+                    <span class="gradient-text">Bienvenido a AI Learn</span>
+                </h1>
+                <p style="font-size: 18px; color: #94a3b8; margin-bottom: 32px;">
+                    Educación personalizada impulsada por inteligencia artificial. Aprende al tu ritmo, recibe retroalimentación instantánea y alcanza tus objetivos.
+                </p>
+                <button class="btn-primary" onclick="mostrarSeccion('cursos', document.querySelectorAll('.nav-btn')[1])" style="font-size: 16px; padding: 14px 32px;">
+                    Explorar Cursos →
+                </button>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                        <span style="font-size: 28px;">🤖</span>
+                        <h3 style="font-size: 18px; font-weight: 700;">Tutor IA Personalizado</h3>
+                    </div>
+                    <p style="color: #cbd5e1;">Responde cualquier pregunta con explicaciones adaptadas a tu nivel. Aprende conceptos complejos de forma simple.</p>
+                </div>
+
+                <div class="card">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                        <span style="font-size: 28px;">📊</span>
+                        <h3 style="font-size: 18px; font-weight: 700;">Análisis de Progreso</h3>
+                    </div>
+                    <p style="color: #cbd5e1;">Monitoreo en tiempo real de tu avance. Identifica fortalezas y áreas de mejora automáticamente.</p>
+                </div>
+
+                <div class="card">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                        <span style="font-size: 28px;">⚡</span>
+                        <h3 style="font-size: 18px; font-weight: 700;">Aprendizaje Adaptativo</h3>
+                    </div>
+                    <p style="color: #cbd5e1;">El contenido se ajusta según tu desempeño. Más difícil si dominas, más fácil si necesitas práctica.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN CURSOS -->
+        <section id="cursos" class="section-hidden section-fade-in">
+            <h2 style="font-size: 36px; font-weight: 800; margin-bottom: 32px;">
+                <span class="gradient-text">Mis Cursos</span>
+            </h2>
+
+            <div class="grid-3" id="contenedor-cursos">
+                <div class="card card-accent">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                        <h3 style="font-size: 18px; font-weight: 700;">Python Avanzado</h3>
+                        <span class="badge">75% completado</span>
+                    </div>
+                    <p style="color: #cbd5e1; margin-bottom: 16px;">Domina funciones, decoradores y programación asincrónica con ejemplos prácticos.</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 75%;"></div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 16px;">
+                        <button class="btn-secondary" style="flex: 1;">Continuar →</button>
+                        <button class="btn-danger">Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="card card-accent">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                        <h3 style="font-size: 18px; font-weight: 700;">React & TypeScript</h3>
+                        <span class="badge">40% completado</span>
+                    </div>
+                    <p style="color: #cbd5e1; margin-bottom: 16px;">Construye aplicaciones modernas con componentes, hooks y tipado seguro.</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 40%;"></div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 16px;">
+                        <button class="btn-secondary" style="flex: 1;">Continuar →</button>
+                        <button class="btn-danger">Eliminar</button>
+                    </div>
+                </div>
+
+                <div class="card card-accent">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                        <h3 style="font-size: 18px; font-weight: 700;">Bases de Datos SQL</h3>
+                        <span class="badge">60% completado</span>
+                    </div>
+                    <p style="color: #cbd5e1; margin-bottom: 16px;">Diseña, consulta y optimiza bases de datos relacionales profesionales.</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 60%;"></div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 16px;">
+                        <button class="btn-secondary" style="flex: 1;">Continuar →</button>
+                        <button class="btn-danger">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 32px; text-align: center;">
+                <button class="btn-primary" onclick="agregarCurso()">
+                    + Agregar Nuevo Curso
+                </button>
+            </div>
+        </section>
+
+        <!-- SECCIÓN PROGRESO -->
+        <section id="progreso" class="section-hidden section-fade-in">
+            <h2 style="font-size: 36px; font-weight: 800; margin-bottom: 32px;">
+                <span class="gradient-text">Mi Progreso</span>
+            </h2>
+
+            <div class="grid-2" style="margin-bottom: 40px;">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                        <div>
+                            <p style="color: #94a3b8; font-size: 14px; margin-bottom: 4px;">Progreso General</p>
+                            <p style="font-size: 36px; font-weight: 800; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">58%</p>
+                        </div>
+                        <span style="font-size: 32px;">📈</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 58%;"></div>
+                    </div>
+                    <p style="color: #64748b; font-size: 12px; margin-top: 8px;">+5% esta semana</p>
+                </div>
+
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <p style="color: #94a3b8; font-size: 14px; margin-bottom: 4px;">Racha de Estudio</p>
+                            <p style="font-size: 36px; font-weight: 800;">🔥 12 días</p>
+                        </div>
+                        <span style="font-size: 32px;">🎯</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 20px;">Estadísticas Detalladas</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px;">
+                    <div style="text-align: center;">
+                        <p style="font-size: 28px; font-weight: 800; color: var(--primary);">42</p>
+                        <p style="color: #94a3b8; font-size: 14px;">Lecciones Completadas</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="font-size: 28px; font-weight: 800; color: var(--accent);">156</p>
+                        <p style="color: #94a3b8; font-size: 14px;">Preguntas Respondidas</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="font-size: 28px; font-weight: 800; color: var(--success);">85%</p>
+                        <p style="color: #94a3b8; font-size: 14px;">Promedio de Aciertos</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="font-size: 28px; font-weight: 800; color: var(--primary);">9h 42m</p>
+                        <p style="color: #94a3b8; font-size: 14px;">Esta Semana</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN TUTOR IA -->
+        <section id="tutor" class="section-hidden section-fade-in">
+            <h2 style="font-size: 36px; font-weight: 800; margin-bottom: 32px;">
+                <span class="gradient-text">Tutor IA Personalizado</span>
+            </h2>
+
+            <div class="grid-2">
+                <div class="card" style="height: fit-content;">
+                    <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">Opciones de Aprendizaje</h3>
+                    <div id="opciones-tutor" style="display: flex; flex-direction: column; gap: 12px;">
+                        <button onclick="seleccionarOpcion('personalizado')" class="btn-secondary" style="text-align: left; padding: 14px;">
+                            🎯 <strong>Enseñanza Personalizada</strong><br><small style="color: #94a3b8;">Adapta el contenido a tu nivel</small>
+                        </button>
+                        <button onclick="seleccionarOpcion('tutoria')" class="btn-secondary" style="text-align: left; padding: 14px;">
+                            💬 <strong>Tutoría 1-a-1</strong><br><small style="color: #94a3b8;">Preguntas ilimitadas</small>
+                        </button>
+                        <button onclick="seleccionarOpcion('quiz')" class="btn-secondary" style="text-align: left; padding: 14px;">
+                            ❓ <strong>Quiz Inteligentes</strong><br><small style="color: #94a3b8;">Evaluaciones personalizadas</small>
+                        </button>
+                        <button onclick="seleccionarOpcion('roadmap')" class="btn-secondary" style="text-align: left; padding: 14px;">
+                            🗺️ <strong>Roadmap Dinámico</strong><br><small style="color: #94a3b8;">Ruta de aprendizaje personalizada</small>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" id="panel-tutor" style="display: flex; flex-direction: column; gap: 16px;">
+                    <div style="padding: 20px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; border-left: 4px solid var(--primary);">
+                        <p style="font-size: 14px; color: #94a3b8;">👋 Selecciona una opción para comenzar con tu tutor IA</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 24px;">
+                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">Chat con IA</h3>
+                <div id="chat-container" style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 16px; height: 300px; overflow-y: auto; margin-bottom: 16px; display: flex; flex-direction: column; gap: 12px;">
+                    <div style="padding: 12px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; max-width: 80%; align-self: flex-start;">
+                        <p style="color: #e2e8f0; font-size: 14px;">¡Hola! Soy tu tutor IA. ¿En qué puedo ayudarte hoy?</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <input id="chat-input" type="text" placeholder="Escribe tu pregunta..." style="flex: 1;">
+                    <button class="btn-primary" onclick="enviarPregunta()">Enviar</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        let contadorCursos = 3;
+
+        // Mostrar sección específica
+        function mostrarSeccion(seccionId, botonActual) {
+            const secciones = document.querySelectorAll('section');
+            secciones.forEach(seccion => {
+                seccion.classList.add('section-hidden');
+                seccion.classList.remove('section-fade-in');
+            });
+
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            if (botonActual) {
+                botonActual.classList.add('active');
+            }
+
+            const seccionActiva = document.getElementById(seccionId);
+            seccionActiva.classList.remove('section-hidden');
+            seccionActiva.classList.add('section-fade-in');
+        }
+
+        // Agregar curso dinámicamente
+        function agregarCurso() {
+            contadorCursos++;
+            const porcentaje = Math.floor(Math.random() * 100);
+            const cursos = ['Machine Learning', 'Web3 & Blockchain', 'Cloud Computing', 'DevOps', 'Ciberseguridad'];
+            const cursoRandom = cursos[Math.floor(Math.random() * cursos.length)];
+            
+            const contenedor = document.getElementById('contenedor-cursos');
+            const tarjeta = document.createElement('div');
+            tarjeta.className = 'card card-accent';
+            tarjeta.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <h3 style="font-size: 18px; font-weight: 700;">${cursoRandom}</h3>
+                    <span class="badge">${porcentaje}% completado</span>
+                </div>
+                <p style="color: #cbd5e1; margin-bottom: 16px;">Nuevo curso agregado para tu desarrollo profesional.</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${porcentaje}%;"></div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 16px;">
+                    <button class="btn-secondary" style="flex: 1;">Continuar →</button>
+                    <button class="btn-danger" onclick="this.parentElement.parentElement.remove();">Eliminar</button>
+                </div>
+            `;
+            contenedor.appendChild(tarjeta);
+        }
+
+        // Seleccionar opción del tutor
+        function seleccionarOpcion(opcion) {
+            const panelTutor = document.getElementById('panel-tutor');
+            const opciones = {
+                personalizado: {
+                    titulo: '🎯 Enseñanza Personalizada',
+                    descripcion: 'El IA ajusta el nivel de dificultad según tu progreso',
+                    contenido: '<p style="color: #cbd5e1; margin-bottom: 12px;">Tu tutor analizará tus respuestas anteriores y adaptará el contenido. Recibirás:</p><ul style="color: #cbd5e1; margin-left: 16px; line-height: 1.8;"><li>Lecciones ajustadas a tu nivel</li><li>Ejemplos contextualizados</li><li>Ejercicios progresivos</li><li>Retroalimentación inmediata</li></ul>'
+                },
+                tutoria: {
+                    titulo: '💬 Tutoría 1-a-1',
+                    descripcion: 'Haz cualquier pregunta y recibe respuestas detalladas',
+                    contenido: '<p style="color: #cbd5e1; margin-bottom: 12px;">Puedes preguntar todo lo que quieras:</p><ul style="color: #cbd5e1; margin-left: 16px; line-height: 1.8;"><li>Explicar conceptos complejos</li><li>Resolver dudas específicas</li><li>Analizar código</li><li>Ayuda con proyectos</li></ul>'
+                },
+                quiz: {
+                    titulo: '❓ Quiz Inteligentes',
+                    descripcion: 'Evaluaciones generadas por IA según tu nivel',
+                    contenido: '<p style="color: #cbd5e1; margin-bottom: 12px;">El IA crea preguntas personalizadas:</p><ul style="color: #cbd5e1; margin-left: 16px; line-height: 1.8;"><li>Pregunta solo temas que has estudiado</li><li>Aumenta dificultad si aciertas</li><li>Feedback explicado</li><li>Identifica áreas débiles</li></ul>'
+                },
+                roadmap: {
+                    titulo: '🗺️ Roadmap Dinámico',
+                    descripcion: 'Ruta de aprendizaje personalizada para tus objetivos',
+                    contenido: '<p style="color: #cbd5e1; margin-bottom: 12px;">Un plan adaptado solo para ti:</p><ul style="color: #cbd5e1; margin-left: 16px; line-height: 1.8;"><li>Define tus objetivos</li><li>Recibe ruta personalizada</li><li>Hitos y milestones</li><li>Actualizaciones en tiempo real</li></ul>'
+                }
+            };
+
+            const opcionData = opciones[opcion];
+            panelTutor.innerHTML = `
+                <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">${opcionData.titulo}</h3>
+                <p style="color: #94a3b8; margin-bottom: 16px;">${opcionData.descripcion}</p>
+                ${opcionData.contenido}
+                <button class="btn-primary" onclick="iniciarTutor()" style="margin-top: 16px; width: 100%;">Iniciar Sesión →</button>
+            `;
+        }
+
+        function iniciarTutor() {
+            alert('¡Sesión de tutoría iniciada! Empieza a escribir tus preguntas en el chat.');
+        }
+
+        // Chat
+        function enviarPregunta() {
+            const input = document.getElementById('chat-input');
+            const pregunta = input.value.trim();
+            if (!pregunta) return;
+
+            const container = document.getElementById('chat-container');
+            
+            // Agregar pregunta del usuario
+            const msgUsuario = document.createElement('div');
+            msgUsuario.style.cssText = 'padding: 12px; background: var(--primary); border-radius: 8px; max-width: 80%; align-self: flex-end; color: white;';
+            msgUsuario.textContent = pregunta;
+            container.appendChild(msgUsuario);
+
+            input.value = '';
+
+            // Simular respuesta del IA
+            setTimeout(() => {
+                const msgIA = document.createElement('div');
+                msgIA.style.cssText = 'padding: 12px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; max-width: 80%; align-self: flex-start;';
+                msgIA.innerHTML = `<p style="color: #e2e8f0; font-size: 14px;">🤖 Excelente pregunta sobre "${pregunta.substring(0, 20)}...". Te estoy preparando una respuesta detallada basada en tu nivel actual de aprendizaje. ¡Continúa explorando! 📚</p>`;
+                container.appendChild(msgIA);
+                container.scrollTop = container.scrollHeight;
+            }, 600);
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Inicializar
+        window.addEventListener('load', () => {
+            mostrarSeccion('inicio', document.querySelectorAll('.nav-btn')[0]);
+        });
+
+        // Enter para enviar
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && document.getElementById('chat-input') === document.activeElement) {
+                enviarPregunta();
+            }
+        });
+    </script>
+</body>
+</html>
